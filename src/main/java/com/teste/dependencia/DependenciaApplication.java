@@ -1,17 +1,30 @@
 package com.teste.dependencia;
 
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
-//@SpringBootApplication
+@SpringBootApplication
 public class DependenciaApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(DependenciaApplication.class, args);
-		new MigracaoUsuario(new FileReader(), new BdWriter()).migrar();
+		SpringApplication.run(DependenciaApplication.class, args);
+//		new MigracaoUsuario(new FileReader(), new BdWriter()).migrar();
 	}
 
+	@Bean
+	ApplicationRunner runner(MigracaoUsuario migracaoUsuario) {
+		return args -> migracaoUsuario.migrar();
+	}
 }
 
+
+
+@Component
 class MigracaoUsuario {
 	Reader<User> reader; // = new FileReader();
 	Writer<User> write; // = new BdWriter();
@@ -41,6 +54,7 @@ interface Writer<T> {
 	void write(List<T> itens);
 }
 
+@Component
 class FileReader implements Reader{
 //	List<User> read() {
 //		System.out.println("lendo usuários do arquivo...");
@@ -53,6 +67,7 @@ class FileReader implements Reader{
 	}
 }
 
+@Component
 class BdWriter implements Writer{
 //	void write(List<User> users) {
 //		System.out.println("Escrevendo usuários no banco...");
